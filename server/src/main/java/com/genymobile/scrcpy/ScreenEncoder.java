@@ -36,7 +36,7 @@ public class ScreenEncoder implements Device.RotationListener, Device.FoldListen
     private final int videoBitRate;
     private final int maxFps;
     private final boolean downsizeOnError;
-    
+
     private boolean firstFrameSent;
     private int consecutiveErrors;
 
