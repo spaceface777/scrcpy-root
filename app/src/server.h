@@ -59,6 +59,7 @@ struct sc_server_params {
     bool list_encoders;
     bool list_displays;
     bool kill_adb_on_close;
+    bool root;
 };
 
 struct sc_server {

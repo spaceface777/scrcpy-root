@@ -79,6 +79,7 @@ enum {
     OPT_AUDIO_SOURCE,
     OPT_KILL_ADB_ON_CLOSE,
     OPT_TIME_LIMIT,
+    OPT_ROOT,
 };
 
 struct sc_option {
@@ -534,6 +535,12 @@ static const struct sc_option options[] = {
         .text = "Set the initial display rotation.\n"
                 "Possible values are 0, 1, 2 and 3. Each increment adds a 90 "
                 "degrees rotation counterclockwise.",
+    },
+    {
+        .longopt_id = OPT_ROOT,
+        .longopt = "root",
+        .text = "Try to launch the server as root.\n"
+                "Disabled by default.",
     },
     {
         .shortopt = 's',
@@ -1976,6 +1983,9 @@ parse_args_with_getopt(struct scrcpy_cli_args *args, int argc, char *argv[],
                 if (!parse_time_limit(optarg, &opts->time_limit)) {
                     return false;
                 }
+                break;
+            case OPT_ROOT:
+                opts->root = true;
                 break;
             default:
                 // getopt prints the error message on stderr
