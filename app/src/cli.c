@@ -907,6 +907,14 @@ static const struct sc_shortcut shortcuts[] = {
         .text = "Flip display vertically",
     },
     {
+        .shortcuts = { "MOD+z" },
+        .text = "Pause or re-pause display",
+    },
+    {
+        .shortcuts = { "MOD+Shift+z" },
+        .text = "Unpause display",
+    },
+    {
         .shortcuts = { "MOD+g" },
         .text = "Resize window to 1:1 (pixel-perfect)",
     },
@@ -2556,9 +2564,9 @@ parse_args_with_getopt(struct scrcpy_cli_args *args, int argc, char *argv[],
 
     if (opts->audio_playback && opts->audio_buffer == -1) {
         if (opts->audio_codec == SC_CODEC_FLAC) {
-            // Use 50 ms audio buffer by default, but use a higher value for FLAC,
-            // which is not low latency (the default encoder produces blocks of
-            // 4096 samples, which represent ~85.333ms).
+            // Use 50 ms audio buffer by default, but use a higher value for
+            // FLAC, which is not low latency (the default encoder produces
+            // blocks of 4096 samples, which represent ~85.333ms).
             LOGI("FLAC audio: audio buffer increased to 120 ms (use "
                  "--audio-buffer to set a custom value)");
             opts->audio_buffer = SC_TICK_FROM_MS(120);
@@ -2598,6 +2606,11 @@ parse_args_with_getopt(struct scrcpy_cli_args *args, int argc, char *argv[],
     }
 
     if (otg) {
+        if (!opts->control) {
+            LOGE("--no-control is not allowed in OTG mode");
+            return false;
+        }
+
         enum sc_keyboard_input_mode kmode = opts->keyboard_input_mode;
         if (kmode != SC_KEYBOARD_INPUT_MODE_AOA
                 && kmode != SC_KEYBOARD_INPUT_MODE_DISABLED) {
