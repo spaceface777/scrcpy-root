@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.hardware.display.VirtualDisplay;
 import android.os.Build;
 import android.os.IBinder;
+import android.system.Os;
 import android.view.Surface;
 
 public class ScreenCapture extends SurfaceCapture implements Device.RotationListener, Device.FoldListener {
@@ -97,6 +98,9 @@ public class ScreenCapture extends SurfaceCapture implements Device.RotationList
         // On Android 12 preview, SDK_INT is still R (not S), but CODENAME is "S".
         boolean secure = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || (Build.VERSION.SDK_INT == Build.VERSION_CODES.R && !"S".equals(
                 Build.VERSION.CODENAME));
+        if (Os.getuid() < 2000) {
+            secure = true;
+        }
         return SurfaceControl.createDisplay("scrcpy", secure);
     }
 

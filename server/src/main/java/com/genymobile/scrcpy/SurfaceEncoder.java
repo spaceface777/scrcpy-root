@@ -1,12 +1,17 @@
 package com.genymobile.scrcpy;
 
+import android.graphics.Rect;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.os.Build;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Surface;
 import android.system.Os;
+
+import com.genymobile.scrcpy.wrappers.SurfaceControl;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -241,28 +246,6 @@ public class SurfaceEncoder implements AsyncProcessor {
         }
 
         return format;
-    }
-
-    private static IBinder createDisplay() {
-        // Since Android 12 (preview), secure displays could not be created with shell permissions anymore.
-        // On Android 12 preview, SDK_INT is still R (not S), but CODENAME is "S".
-        boolean secure = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || (Build.VERSION.SDK_INT == Build.VERSION_CODES.R && !"S"
-                .equals(Build.VERSION.CODENAME));
-        if (Os.getuid() < 2000) {
-            secure = true;
-        }
-        return SurfaceControl.createDisplay("scrcpy", secure);
-    }
-
-    private static void setDisplaySurface(IBinder display, Surface surface, int orientation, Rect deviceRect, Rect displayRect, int layerStack) {
-        SurfaceControl.openTransaction();
-        try {
-            SurfaceControl.setDisplaySurface(display, surface);
-            SurfaceControl.setDisplayProjection(display, orientation, deviceRect, displayRect);
-            SurfaceControl.setDisplayLayerStack(display, layerStack);
-        } finally {
-            SurfaceControl.closeTransaction();
-        }
     }
 
     @Override
